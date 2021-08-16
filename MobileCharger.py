@@ -62,7 +62,7 @@ class MobileCharger:
         self.end_time = time_stem + moving_time + charging_time
 
     def run(self, network, time_stem, net=None, optimizer=None):
-        if (self.end_time > time_stem):
+        if self.end_time > time_stem:
             self.is_active = True
             if distance.euclidean(self.current, self.end) < 10**(-3):
                 self.is_stand = True

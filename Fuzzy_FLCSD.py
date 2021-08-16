@@ -33,6 +33,7 @@ def triangular(x, a, b, c):
     else:
         return 0
 
+
 def residual_energy(re, E_max):
     return {"l": trapezoidal(re, 0, 0, 0.3 * E_max, 0.6 * E_max),
             "m": triangular(re, 0.3 * E_max, 0.6 * E_max, 0.9 * E_max),
@@ -87,10 +88,12 @@ def estimate(re, E_max, d, d_max, cn, cn_max, ecr, ecr_max):
         for d_index in ["n", "a", "f"]:
             for cn_index in ["f", "a", "m"]:
                 for ecr_index in ["l", "m", "h"]:
-                    out_membership.append(min(re_fuzzy[re_index], d_fuzzy[d_index], cn_fuzzy[cn_index], ecr_fuzzy[ecr_index]))
+                    out_membership.append(
+                        min(re_fuzzy[re_index], d_fuzzy[d_index], cn_fuzzy[cn_index], ecr_fuzzy[ecr_index]))
                     # print(sum(out_membership))
     try:
-        return sum([out_membership[index] * out_crisp(out_rule[index]) for index, _ in enumerate(out_rule)]) / sum([out_membership[index] for index, _ in enumerate(out_rule)])
+        return sum([out_membership[index] * out_crisp(out_rule[index]) for index, _ in enumerate(out_rule)]) / sum(
+            [out_membership[index] for index, _ in enumerate(out_rule)])
     except:
         return 0
 # print(estimate(9.76309907199871, 10, 959.3815716387302, 1339.3505889049363, 124, 145, 0.0, 0.0029687119999999975))
