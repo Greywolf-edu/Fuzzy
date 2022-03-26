@@ -1,7 +1,7 @@
 from scipy.spatial.distance import euclidean
 from Simulator.Network import Parameter as para
-from Fuzzy_method import check_request, self_charge
-from Fuzzy_FLCSD import estimate
+from Optimizer.Fuzzy_method import check_request, self_charge
+from Optimizer.Fuzzy_FLCSD import estimate
 
 
 class Fuzzy:

@@ -1,8 +1,8 @@
 import random
 
 from scipy.spatial.distance import euclidean
-from Package import Package
-import Parameter as para
+from Simulator.Network.Package import Package
+import Simulator.Network.Parameter as para
 
 def uniform_com_func(net):
     for node in net.node:
@@ -87,5 +87,17 @@ def get_CN_max(net):
             CN_max = max(CN_max, CN)
     return CN_max
 
-
+def set_checkpoint(t=0, exp_type='node', exp_index=4, nb_run=0, network=None, optimizer=None, dead_time=0):
+    checkpoint = {
+        'time'              : t,
+        'experiment_type'   : exp_type,
+        'experiment_index'  : exp_index,
+        'nb_run'            : nb_run,
+        'network'           : network,
+        'optimizer'         : optimizer,
+        'dead_time'         : dead_time
+    }
+    with open('checkpoint/checkpoint_{}_{}.pkl'.format(exp_type, exp_index), 'wb') as f:
+        pickle.dump(checkpoint, f)
+    print("Simulation checkpoint set at {}s".format(t))
 

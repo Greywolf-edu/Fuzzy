@@ -2,9 +2,9 @@ import csv
 
 from scipy.spatial import distance
 
-import Parameter as para
-from Network_Method import uniform_com_func, to_string, count_package_function, partition_function, get_D_max, \
-    get_ECR_max, get_CN_max
+import Simulator.Network.Parameter as para
+from Simulator.Network.Network_Method import uniform_com_func, to_string, count_package_function, partition_function, get_D_max, \
+    get_ECR_max, get_CN_max, set_checkpoint
 
 
 class Network:
@@ -90,19 +90,22 @@ class Network:
                     mc.run(network=self, time_stem=t, net=self, optimizer=optimizer)
             return state
 
-    def simulate_max_time(self, optimizer, max_time=2000000, file_name="log/information_log.csv"):
-        with open(file_name, "w") as information_log:
-            writer = csv.DictWriter(information_log, fieldnames=["time", "nb_dead_node", "nb_package"])
-            writer.writeheader()
-        nb_dead = 0
-        nb_package = len(self.target)
-        dead_time = 0
 
-        t = 0
-        while t <= max_time:
+    def simulate_max_time(self, exp_type='node', exp_index=4, nb_run=0, optimizer=None, t=0, dead_time=0, max_time=2000000, file_name="log/information_log.csv"):
+        nb_dead = self.count_dead_node()
+        nb_package = self.count_package()
+        dead_time = dead_time
+
+        if t == 0:
+            with open(file_name, "w") as information_log:
+                writer = csv.DictWriter(information_log, fieldnames=["time", "nb_dead_node", "nb_package"])
+                writer.writeheader()
+                
+        t = t
+        while t <= max_time and nb_package==len(self.target):
             t = t + 1
             if (t - 1) % 100 == 0:
-                print("time = ", t, ", lowest enegy node: ", self.node[self.find_min_node()].energy, "at",
+                print("time = ", t, ", lowest energy node: ", self.node[self.find_min_node()].energy, "at",
                       self.node[self.find_min_node()].location)
                 print('\tnumber of dead node: {}'.format(self.count_dead_node()))
                 print('\tnumber of package: {}'.format(self.count_package()))
@@ -113,6 +116,9 @@ class Network:
                 for mc in self.mc_list:
                     print("\tMC#{} at{} is {}".format(mc.id, mc.current, mc.get_status()))
 
+            if (t-1) % 200 == 0 and t > 1:
+                set_checkpoint(t=t, exp_type=exp_type, exp_index=exp_index, nb_run=nb_run, network=self, optimizer=optimizer, dead_time=dead_time)
+
             ######################################
             if t == 200:
                 self.partition()
@@ -120,7 +126,6 @@ class Network:
             ######################################
 
             state = self.run_per_second(t, optimizer)
-
             current_dead = self.count_dead_node()
             current_package = self.count_package()
             if not self.package_lost:
@@ -137,11 +142,8 @@ class Network:
         print('\nFinished with {} dead sensors, {} packages'.format(self.count_dead_node(), self.count_package()))
         return dead_time, nb_dead
 
-    def simulate(self, optimizer, max_time=2000000, file_name='log/log.csv'):
-        if max_time:
-            life_time = self.simulate_max_time(optimizer=optimizer, max_time=max_time, file_name=file_name)
-        else:
-            life_time = self.simulate_lifetime(optimizer=optimizer, file_name=file_name)
+    def simulate(self, exp_type='node', exp_index=4, nb_run=0, optimizer=None, t=0, dead_time=0, max_time=2000000, file_name='log/log.csv'):
+        life_time = self.simulate_max_time(exp_type=exp_type, exp_index=exp_index, nb_run=nb_run, optimizer=optimizer, t=t, dead_time=dead_time, max_time=max_time, file_name=file_name)
         return life_time
 
     def print_net(self, func=to_string):
@@ -192,7 +194,7 @@ class Network:
         #         #     print("region #{}: {} nodes, rtl = {}".format(i, len(region), rtl))
 
         #     def run_per_second(self, t, optimizer):
-        state = self.communicate()
+        # state = self.communicate()
         # request_id = []
         # for i in len(self.mc_list):
         #     N_coverage = self
@@ -204,20 +206,20 @@ class Network:
         #         else:
         #             node.is_request = False
         # if request_id and not self.partitioned:
-        self.request_id = []
-        if self.partitioned:
-            for mc in self.mc_list:
-                if not mc.is_active:
-                    self.request(mc, t)
-                    mc.get_next_location(self, t, optimizer)
-            if self.request_id:
-                for index, node in enumerate(self.node):
-                    if index not in self.request_id and (t - node.check_point[-1]["time"]) > 50:
-                        node.set_check_point(t)
-            if optimizer:
-                for mc in self.mc_list:
-                    mc.run(network=self, time_stem=t, net=self, optimizer=optimizer)
-            return state
+        # self.request_id = []
+        # if self.partitioned:
+        #     for mc in self.mc_list:
+        #         if not mc.is_active:
+        #             self.request(mc, t)
+        #             mc.get_next_location(self, t, optimizer)
+        #     if self.request_id:
+        #         for index, node in enumerate(self.node):
+        #             if index not in self.request_id and (t - node.check_point[-1]["time"]) > 50:
+        #                 node.set_check_point(t)
+        #     if optimizer:
+        #         for mc in self.mc_list:
+        #             mc.run(network=self, time_stem=t, net=self, optimizer=optimizer)
+        #     return state
 
 #     def simulate_lifetime(self, optimizer, file_name="log/energy_log.csv", D_max_func=get_D_max, ECR_max_func=get_ECR_max):
 #         energy_log = open(file_name, "w")

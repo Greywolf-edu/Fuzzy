@@ -10,9 +10,7 @@ import csv
 from scipy.stats import sem, t
 from scipy import mean
 
-experiment_type = input('experiment_type: ')  # ['node', 'target', 'MC', 'prob', 'package', 'cluster']
-df = pd.read_csv("data/" + experiment_type + ".csv")
-experiment_index = int(input('experiment_index: '))  # [0..6]
+
 
 # | Experiment_index      Experiment_type|    0    |    1    |    2    |    3     |    4   |
 # |--------------------------------------|---------|---------|---------|----------|--------|

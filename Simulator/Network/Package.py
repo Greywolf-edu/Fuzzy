@@ -1,4 +1,4 @@
-import Parameter as para
+import Simulator.Network.Parameter as para
 
 
 class Package:

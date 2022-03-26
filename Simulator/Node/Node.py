@@ -2,8 +2,7 @@ import math
 from scipy.spatial import distance
 
 from Simulator.Network import Parameter as para
-from Node_Method import to_string, find_receiver, request_function, estimate_average_energy, calculate_angle
-
+from Simulator.Node.Node_Method import to_string, find_receiver, request_function, estimate_average_energy, calculate_angle
 
 class Node:
     def __init__(self, location=None, com_ran=None, sen_ran=None, energy=None, prob=para.prob, avg_energy=0.0,

@@ -1,7 +1,7 @@
 from scipy.spatial import distance
 
 from Simulator.Network import Parameter as para
-from MobileCharger_Method import get_location, charging
+from Simulator.Mobile_Charger.MobileCharger_Method import get_location, charging
 
 
 class MobileCharger:
