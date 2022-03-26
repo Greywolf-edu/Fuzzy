@@ -1,5 +1,4 @@
 import csv
-
 from scipy.spatial import distance
 
 import Simulator.Network.Parameter as para
