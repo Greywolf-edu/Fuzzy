@@ -68,7 +68,11 @@ def start_simulating():
         print("Optimizer Fuzzy:\n")
 
         file_name = "log/fuzzy_basic_{}_{}_{}.csv".format(experiment_type, experiment_index, nb_run)
-        temp = net.simulate(optimizer=fuzzy, file_name=file_name)
+        with open(file_name, "w") as information_log:
+            writer = csv.DictWriter(information_log, fieldnames=["time", "nb_dead_node", "nb_package"])
+            writer.writeheader()
+        
+        temp = net.simulate(exp_type=experiment_type, exp_index=experiment_index, nb_run=nb_run, optimizer=fuzzy, t=0, dead_time=0, file_name=file_name)
         life_time.append(temp[0])
         result.writerow({"nb_run": nb_run, "lifetime": temp[0], "dead_node": temp[1]})
 
